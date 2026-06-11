@@ -1,4 +1,3 @@
-import { fileURLToPath } from 'node:url';
 import { Markup } from 'telegraf';
 import { config, isAdmin } from '../config.js';
 import { answerQuestion } from '../ai/gemini.js';
@@ -7,11 +6,6 @@ import { logInteraction, getStats, setPreferredLang } from '../services/userServ
 import { t, staticLang, LANG_PROMPT, LANG_BUTTONS } from './messages.js';
 
 const TELEGRAM_MAX = 4096;
-
-// Official Karakalpakstan flag, shown as the banner on the /start language picker.
-const FLAG_PATH = fileURLToPath(
-  new URL('../../assets/karakalpakstan-flag.png', import.meta.url)
-);
 
 // One button per language, stacked vertically. callback_data = "lang:<code>".
 const langKeyboard = Markup.inlineKeyboard(
@@ -36,19 +30,9 @@ async function reply(ctx, text) {
   }
 }
 
-// /start -> show the Karakalpakstan flag banner + ask which language to use,
-// THEN (on button tap) show the intro in the chosen language.
+// /start -> ask which language to use, THEN show the intro in that language.
 export async function handleStart(ctx) {
-  try {
-    await ctx.replyWithPhoto(
-      { source: FLAG_PATH },
-      { caption: LANG_PROMPT, ...langKeyboard }
-    );
-  } catch (err) {
-    // If the image can't be sent for any reason, fall back to a text picker.
-    console.error('Could not send flag banner:', err.message);
-    await ctx.reply(LANG_PROMPT, langKeyboard);
-  }
+  await ctx.reply(LANG_PROMPT, langKeyboard);
 }
 
 // Tap on a language button -> remember it and reveal the intro in that language.

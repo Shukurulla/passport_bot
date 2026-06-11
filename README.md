@@ -139,9 +139,6 @@ which the bot uses to answer "how do I contact …?" questions. Keep fees,
 deadlines and phone numbers exact. Restart the bot to apply (the prompt is built
 at startup).
 
-The `/start` language picker shows the official **Karakalpakstan flag** banner
-from `assets/karakalpakstan-flag.png`. Replace that file to change the banner.
-
 ## Notes on languages & models
 
 - Default model `gemini-2.5-flash` is fast, cheap and solid for Uzbek/Russian.

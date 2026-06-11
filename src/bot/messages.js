@@ -42,13 +42,11 @@ export const LANG_PROMPT =
   'Пожалуйста, выберите язык:';
 
 // Language-selection buttons. `code` matches our internal language keys.
-// No emoji for Karakalpak: there is no Unicode flag for it, and a stand-in
-// symbol would be disrespectful. The real Karakalpakstan flag is shown as the
-// banner image above the buttons instead.
+// Plain text labels — no flags of any kind.
 export const LANG_BUTTONS = [
-  { code: 'uz_latn', label: '🇺🇿 Oʻzbekcha' },
+  { code: 'uz_latn', label: 'Oʻzbekcha' },
   { code: 'kk', label: 'Qaraqalpaqsha' },
-  { code: 'ru', label: '🇷🇺 Русский' },
+  { code: 'ru', label: 'Русский' },
 ];
 
 export const UI = {
