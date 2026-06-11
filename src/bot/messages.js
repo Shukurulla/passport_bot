@@ -12,6 +12,7 @@ const SERVICES_UZ = [
   '• 🌍 Chet el fuqarolarini vaqtincha ro‘yxatga olish',
   '• 📜 Fuqarolikni qabul qilish va undan chiqish',
   '• ✉️ Taklifnoma (mehmon chaqiruvi)',
+  '• 📞 Tuman/shahar bo‘limlari bog‘lanish raqamlari',
 ].join('\n');
 
 const SERVICES_RU = [
@@ -21,6 +22,7 @@ const SERVICES_RU = [
   '• 🌍 Временная регистрация иностранных граждан',
   '• 📜 Приём и выход из гражданства',
   '• ✉️ Приглашение (Taklifnoma)',
+  '• 📞 Контактные телефоны районных/городских отделов',
 ].join('\n');
 
 const SERVICES_KK = [
@@ -30,6 +32,7 @@ const SERVICES_KK = [
   '• 🌍 Shet el puqaralarin waqtınsha dizimge alıw',
   '• 📜 Puqaralıqtı qabıl etiw hám shığıw',
   '• ✉️ Shaqırıw qағazı (Taklifnoma)',
+  '• 📞 Rayon/qala bólimleriniń baylanıs telefonları',
 ].join('\n');
 
 // Shown on /start, before we know the user's language — so it's trilingual.
@@ -39,9 +42,12 @@ export const LANG_PROMPT =
   'Пожалуйста, выберите язык:';
 
 // Language-selection buttons. `code` matches our internal language keys.
+// No emoji for Karakalpak: there is no Unicode flag for it, and a stand-in
+// symbol would be disrespectful. The real Karakalpakstan flag is shown as the
+// banner image above the buttons instead.
 export const LANG_BUTTONS = [
   { code: 'uz_latn', label: '🇺🇿 Oʻzbekcha' },
-  { code: 'kk', label: '🟦 Qaraqalpaqsha' },
+  { code: 'kk', label: 'Qaraqalpaqsha' },
   { code: 'ru', label: '🇷🇺 Русский' },
 ];
 

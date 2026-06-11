@@ -125,6 +125,56 @@ export const knowledgeBase = [
   },
 ];
 
+// Updated contact phone numbers of all district/city Migration &
+// Personalization (MvaPB) departments of the Republic of Karakalpakstan.
+// Source: qriiv.uz (official IIV MvaPB), published 9 June 2026.
+// District names are kept in their official Latin spelling. Numbers are exact.
+export const CONTACTS = {
+  source: 'Qoraqalpog‘iston Respublikasi IIV MvaPB, qriiv.uz (2026-yil 9-iyun)',
+  // Main department.
+  main: {
+    name: 'IIV MvaPB (Bosh bo‘lim)',
+    phones: ['+998 95 714-31-82', '+998 95 714-31-72'],
+  },
+  // District / city departments, in the published order.
+  departments: [
+    { name: 'Nukus shahar', phone: '+998 95 714-31-96' },
+    { name: 'Nukus tumani', phone: '+998 95 714-31-95' },
+    { name: 'Kegeyli tumani', phone: '+998 95 714-31-94' },
+    { name: 'Bo‘zatov tumani', phone: '+998 95 714-31-93' },
+    { name: 'Chimboy tumani', phone: '+998 95 714-31-90' },
+    { name: 'Qorao‘zak tumani', phone: '+998 95 714-31-89' },
+    { name: 'Taxtako‘pir tumani', phone: '+998 95 714-31-84' },
+    { name: 'Taxiatosh tumani', phone: '+998 95 714-31-83' },
+    { name: 'Xo‘jayli tumani', phone: '+998 95 714-31-80' },
+    { name: 'Sho‘manay tumani', phone: '+998 95 714-31-79' },
+    { name: 'Qonliko‘l tumani', phone: '+998 95 714-31-78' },
+    { name: 'Qo‘ng‘irot tumani', phone: '+998 95 714-31-76' },
+    { name: 'Mo‘ynoq tumani', phone: '+998 95 714-31-75' },
+    { name: 'Amudaryo tumani', phone: '+998 95 714-31-70' },
+    { name: 'Beruniy tumani', phone: '+998 95 714-31-68' },
+    { name: 'To‘rtko‘l tumani', phone: '+998 95 714-31-66' },
+    { name: 'Ellikqal’a tumani', phone: '+998 95 714-31-67' },
+  ],
+  // General Ministry of Internal Affairs lines (from the same official site).
+  general: [
+    { name: 'Ishonch telefoni (umumiy)', phone: '1102' },
+    { name: 'Navbatchilik qismi', phone: '102' },
+  ],
+};
+
+/** Render the contacts as a plain-text block for the system prompt. */
+export function renderContacts() {
+  const lines = [
+    `### Боғланиш телефон рақамлари (${CONTACTS.source})`,
+    `Бу рақамлар орқали вақтинча ва доимий рўйхат, паспорт ва фуқаролик бўйича мурожаат қилиш мумкин.`,
+    `  • ${CONTACTS.main.name}: ${CONTACTS.main.phones.join(', ')}`,
+    ...CONTACTS.departments.map((d) => `  • ${d.name}: ${d.phone}`),
+    ...CONTACTS.general.map((g) => `  • ${g.name}: ${g.phone}`),
+  ];
+  return lines.join('\n');
+}
+
 /** Render the knowledge base as a plain-text block for the system prompt. */
 export function renderKnowledgeBase() {
   const sections = knowledgeBase.map((cat) => {
@@ -133,7 +183,7 @@ export function renderKnowledgeBase() {
       .join('\n');
     return `### ${cat.title}\n${qa}`;
   });
-  return `${BHM_NOTE}\n\n${sections.join('\n\n')}`;
+  return `${BHM_NOTE}\n\n${sections.join('\n\n')}\n\n${renderContacts()}`;
 }
 
 /** Short list of the topics the bot covers, for greetings/help. */

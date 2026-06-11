@@ -133,8 +133,14 @@ src/
 ## Updating the knowledge base
 
 Edit `src/knowledge/knowledgeBase.js` — add/edit categories and Q&A items.
-Keep fees and deadlines exact. Restart the bot to apply (the prompt is built at
-startup).
+The same file also holds `CONTACTS` — the official phone numbers of every
+Karakalpakstan district/city MvaPB department (source: qriiv.uz, 9 June 2026),
+which the bot uses to answer "how do I contact …?" questions. Keep fees,
+deadlines and phone numbers exact. Restart the bot to apply (the prompt is built
+at startup).
+
+The `/start` language picker shows the official **Karakalpakstan flag** banner
+from `assets/karakalpakstan-flag.png`. Replace that file to change the banner.
 
 ## Notes on languages & models
 

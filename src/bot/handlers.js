@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { Markup } from 'telegraf';
 import { config, isAdmin } from '../config.js';
 import { answerQuestion } from '../ai/gemini.js';
@@ -6,6 +7,11 @@ import { logInteraction, getStats, setPreferredLang } from '../services/userServ
 import { t, staticLang, LANG_PROMPT, LANG_BUTTONS } from './messages.js';
 
 const TELEGRAM_MAX = 4096;
+
+// Official Karakalpakstan flag, shown as the banner on the /start language picker.
+const FLAG_PATH = fileURLToPath(
+  new URL('../../assets/karakalpakstan-flag.png', import.meta.url)
+);
 
 // One button per language, stacked vertically. callback_data = "lang:<code>".
 const langKeyboard = Markup.inlineKeyboard(
@@ -30,9 +36,19 @@ async function reply(ctx, text) {
   }
 }
 
-// /start -> ask which language to use, THEN show the intro in that language.
+// /start -> show the Karakalpakstan flag banner + ask which language to use,
+// THEN (on button tap) show the intro in the chosen language.
 export async function handleStart(ctx) {
-  await ctx.reply(LANG_PROMPT, langKeyboard);
+  try {
+    await ctx.replyWithPhoto(
+      { source: FLAG_PATH },
+      { caption: LANG_PROMPT, ...langKeyboard }
+    );
+  } catch (err) {
+    // If the image can't be sent for any reason, fall back to a text picker.
+    console.error('Could not send flag banner:', err.message);
+    await ctx.reply(LANG_PROMPT, langKeyboard);
+  }
 }
 
 // Tap on a language button -> remember it and reveal the intro in that language.
@@ -45,13 +61,10 @@ export async function handleLangChoice(ctx) {
   }
   await ctx.answerCbQuery().catch(() => {});
 
-  const welcome = t('welcome', lang);
-  // Replace the language prompt (and its buttons) with the welcome text.
-  try {
-    await ctx.editMessageText(welcome, { disable_web_page_preview: true });
-  } catch {
-    await reply(ctx, welcome);
-  }
+  // Remove the buttons from the picker (works whether it's a photo or text),
+  // then send the intro in the chosen language as a fresh message.
+  await ctx.editMessageReplyMarkup({ inline_keyboard: [] }).catch(() => {});
+  await reply(ctx, t('welcome', lang));
 }
 
 export async function handleHelp(ctx) {
