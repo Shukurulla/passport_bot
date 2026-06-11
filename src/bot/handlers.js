@@ -1,10 +1,22 @@
+import { Markup } from 'telegraf';
 import { config, isAdmin } from '../config.js';
 import { answerQuestion } from '../ai/gemini.js';
 import { allowRequest } from '../services/rateLimiter.js';
-import { logInteraction, getStats } from '../services/userService.js';
-import { t, staticLang } from './messages.js';
+import { logInteraction, getStats, setPreferredLang } from '../services/userService.js';
+import { t, staticLang, LANG_PROMPT, LANG_BUTTONS } from './messages.js';
 
 const TELEGRAM_MAX = 4096;
+
+// One button per language, stacked vertically. callback_data = "lang:<code>".
+const langKeyboard = Markup.inlineKeyboard(
+  LANG_BUTTONS.map((b) => [Markup.button.callback(b.label, `lang:${b.code}`)])
+);
+
+/** Best UI language for static messages: explicit choice > last detected > client locale. */
+function uiLang(ctx) {
+  const u = ctx.state?.user;
+  return u?.preferredLang || u?.lastDetectedLanguage || staticLang(ctx.from?.language_code);
+}
 
 /** Send a possibly long reply, split into Telegram-sized chunks. */
 async function reply(ctx, text) {
@@ -18,21 +30,41 @@ async function reply(ctx, text) {
   }
 }
 
+// /start -> ask which language to use, THEN show the intro in that language.
 export async function handleStart(ctx) {
-  await reply(ctx, t('welcome', staticLang(ctx.from?.language_code)));
+  await ctx.reply(LANG_PROMPT, langKeyboard);
+}
+
+// Tap on a language button -> remember it and reveal the intro in that language.
+export async function handleLangChoice(ctx) {
+  const lang = ctx.match?.[1] || 'uz_latn';
+  try {
+    await setPreferredLang(ctx.from.id, lang);
+  } catch (err) {
+    console.error('setPreferredLang failed:', err.message);
+  }
+  await ctx.answerCbQuery().catch(() => {});
+
+  const welcome = t('welcome', lang);
+  // Replace the language prompt (and its buttons) with the welcome text.
+  try {
+    await ctx.editMessageText(welcome, { disable_web_page_preview: true });
+  } catch {
+    await reply(ctx, welcome);
+  }
 }
 
 export async function handleHelp(ctx) {
-  await reply(ctx, t('help', staticLang(ctx.from?.language_code)));
+  await reply(ctx, t('help', uiLang(ctx)));
 }
 
 export async function handleNonText(ctx) {
-  await reply(ctx, t('nonText', staticLang(ctx.from?.language_code)));
+  await reply(ctx, t('nonText', uiLang(ctx)));
 }
 
 /** Admin-only stats. The AI can never reveal these — only this command can. */
 export async function handleStats(ctx) {
-  const lang = staticLang(ctx.from?.language_code);
+  const lang = uiLang(ctx);
   if (!isAdmin(ctx.from?.id)) {
     await reply(ctx, t('adminOnly', lang));
     return;
@@ -57,7 +89,8 @@ export async function handleStats(ctx) {
 export async function handleText(ctx) {
   const from = ctx.from;
   const user = ctx.state.user;
-  const fallbackLang = user?.lastDetectedLanguage || staticLang(from?.language_code);
+  const fallbackLang =
+    user?.lastDetectedLanguage || user?.preferredLang || staticLang(from?.language_code);
 
   // Anti-flood: cap AI calls per user per minute.
   if (!allowRequest(from.id, config.maxMessagesPerMinute)) {

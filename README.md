@@ -71,10 +71,16 @@ Telegram and send a question.
 
 ## Commands
 
-- `/start` — welcome + list of topics
-- `/help` — how to use the bot
+- `/start` — first asks the user to **pick a language** (Uzbek / Karakalpak /
+  Russian) with buttons, then shows the intro + topic list in that language.
+  Actual questions are still auto-detected per message.
+- `/help` — how to use the bot (in the user's chosen / detected language)
 - `/stats` — **admins only** — total users, total questions, last-24h activity,
   breakdown by language and intent
+
+On startup the bot also sets its public **description** (the trilingual text
+shown in the empty chat before the user taps *Start*), a short description, and
+the command menu — via `src/bot/profile.js`. No BotFather setup needed.
 
 ---
 

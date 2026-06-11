@@ -1,6 +1,7 @@
 import { config } from './config.js';
 import { connectDb, disconnectDb } from './db/connection.js';
 import { createBot } from './bot/bot.js';
+import { setBotProfile } from './bot/profile.js';
 
 async function main() {
   await connectDb();
@@ -13,6 +14,9 @@ async function main() {
   }
 
   const bot = createBot();
+
+  // Configure the public profile (trilingual description shown before /start).
+  await setBotProfile(bot);
 
   // Long polling. For production behind HTTPS you can switch to webhooks.
   bot.launch({ dropPendingUpdates: true });

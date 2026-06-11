@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema(
     telegramLanguageCode: String,
     // Last language our AI detected from the user's actual messages.
     lastDetectedLanguage: String,
+    // Language the user picked on /start for the UI/intro (uz_latn | kk | ru).
+    preferredLang: String,
     // Set by an admin to cut off an abusive user.
     isBlocked: { type: Boolean, default: false },
     messageCount: { type: Number, default: 0 },

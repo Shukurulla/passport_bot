@@ -32,6 +32,19 @@ const SERVICES_KK = [
   '• ✉️ Shaqırıw qағazı (Taklifnoma)',
 ].join('\n');
 
+// Shown on /start, before we know the user's language — so it's trilingual.
+export const LANG_PROMPT =
+  '🌐 Iltimos, tilni tanlang:\n' +
+  'Tildi saylań:\n' +
+  'Пожалуйста, выберите язык:';
+
+// Language-selection buttons. `code` matches our internal language keys.
+export const LANG_BUTTONS = [
+  { code: 'uz_latn', label: '🇺🇿 Oʻzbekcha' },
+  { code: 'kk', label: '🟦 Qaraqalpaqsha' },
+  { code: 'ru', label: '🇷🇺 Русский' },
+];
+
 export const UI = {
   welcome: {
     uz_latn:

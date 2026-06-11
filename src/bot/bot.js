@@ -5,6 +5,7 @@ import { upsertUser } from '../services/userService.js';
 import { t, staticLang } from './messages.js';
 import {
   handleStart,
+  handleLangChoice,
   handleHelp,
   handleStats,
   handleText,
@@ -21,7 +22,7 @@ export function createBot() {
       const user = await upsertUser(ctx.from);
       ctx.state.user = user;
       if (user.isBlocked) {
-        await ctx.reply(t('blocked', staticLang(ctx.from.language_code)));
+        await ctx.reply(t('blocked', user.preferredLang || staticLang(ctx.from.language_code)));
         return; // stop the pipeline for blocked users
       }
     } catch (err) {
@@ -34,6 +35,9 @@ export function createBot() {
   bot.start(handleStart);
   bot.help(handleHelp);
   bot.command('stats', handleStats);
+
+  // Language picker buttons shown on /start.
+  bot.action(/^lang:(uz_latn|kk|ru)$/, handleLangChoice);
 
   // Text questions -> AI. Anything else (photo, sticker, voice, ...) -> hint.
   bot.on(message('text'), handleText);

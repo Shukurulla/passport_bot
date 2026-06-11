@@ -19,6 +19,14 @@ export async function upsertUser(from) {
   );
 }
 
+/** Store the UI language the user picked on /start. */
+export async function setPreferredLang(telegramId, lang) {
+  await User.updateOne(
+    { telegramId },
+    { $set: { preferredLang: lang, lastSeenAt: new Date() } }
+  );
+}
+
 /** Persist one question/answer interaction and bump the user's counters. */
 export async function logInteraction(data) {
   await Message.create(data);
